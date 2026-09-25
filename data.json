@@ -1,0 +1,11 @@
+{
+  "player": {
+    "speed": 350
+  },
+  "coin": {
+    "points": 10
+  },
+  "ui": {
+    "scoreLabel": "Score: "
+  }
+}
