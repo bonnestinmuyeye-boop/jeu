@@ -1,6 +1,6 @@
 {
-  "name": "Mon Jeu Mobile",
-  "short_name": "MonJeu",
+  "name": "Bmm Jeu",
+  "short_name": "Bmm Jeu",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
