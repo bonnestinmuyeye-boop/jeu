@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jeu-v2'; // <-- Passer de v1 à v2
+const CACHE_NAME = 'jeu-v3';
 const ASSETS = [
   './',
   './index.html',
