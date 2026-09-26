@@ -2,39 +2,35 @@
   "levels": {
     "amateur": {
       "name": "Amateur",
-      "baseSpeed": 140,
-      "maxNum": 10,
-      "operations": ["+"],
-      "speedIncrement": 4,
-      "shieldDuration": 7000
+      "startSpeed": 180,
+      "speedIncrement": 6,
+      "shieldDuration": 7000,
+      "bombRatio": 0.25
     },
     "normal": {
       "name": "Normal",
-      "baseSpeed": 200,
-      "maxNum": 20,
-      "operations": ["+", "-"],
-      "speedIncrement": 6,
-      "shieldDuration": 6000
+      "startSpeed": 240,
+      "speedIncrement": 8,
+      "shieldDuration": 6000,
+      "bombRatio": 0.35
     },
     "pro": {
       "name": "Pro",
-      "baseSpeed": 260,
-      "maxNum": 30,
-      "operations": ["+", "-", "*"],
-      "speedIncrement": 8,
-      "shieldDuration": 5000
+      "startSpeed": 310,
+      "speedIncrement": 10,
+      "shieldDuration": 5000,
+      "bombRatio": 0.45
     },
     "legende": {
       "name": "Légende",
-      "baseSpeed": 330,
-      "maxNum": 50,
-      "operations": ["+", "-", "*"],
-      "speedIncrement": 12,
-      "shieldDuration": 4000
+      "startSpeed": 380,
+      "speedIncrement": 14,
+      "shieldDuration": 4000,
+      "bombRatio": 0.55
     }
   },
-  "bonuses": {
-    "giftPoints": 50,
-    "dropInterval": 9000
+  "rewards": {
+    "coinPoints": 10,
+    "giftPoints": 50
   }
 }
