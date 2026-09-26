@@ -1,11 +1,40 @@
 {
-  "player": {
-    "speed": 350
+  "levels": {
+    "amateur": {
+      "name": "Amateur",
+      "baseSpeed": 140,
+      "maxNum": 10,
+      "operations": ["+"],
+      "speedIncrement": 4,
+      "shieldDuration": 7000
+    },
+    "normal": {
+      "name": "Normal",
+      "baseSpeed": 200,
+      "maxNum": 20,
+      "operations": ["+", "-"],
+      "speedIncrement": 6,
+      "shieldDuration": 6000
+    },
+    "pro": {
+      "name": "Pro",
+      "baseSpeed": 260,
+      "maxNum": 30,
+      "operations": ["+", "-", "*"],
+      "speedIncrement": 8,
+      "shieldDuration": 5000
+    },
+    "legende": {
+      "name": "Légende",
+      "baseSpeed": 330,
+      "maxNum": 50,
+      "operations": ["+", "-", "*"],
+      "speedIncrement": 12,
+      "shieldDuration": 4000
+    }
   },
-  "coin": {
-    "points": 10
-  },
-  "ui": {
-    "scoreLabel": "Score: "
+  "bonuses": {
+    "giftPoints": 50,
+    "dropInterval": 9000
   }
 }
