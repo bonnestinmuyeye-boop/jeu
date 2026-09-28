@@ -1,4 +1,4 @@
-// Sons dynamiques via le Web Audio API
+// --- Moteur Audio ---
 const SoundEngine = {
   ctx: null,
   init() {
@@ -15,12 +15,10 @@ const SoundEngine = {
     const g = this.ctx.createGain();
     osc.connect(g);
     g.connect(this.ctx.destination);
-
     osc.frequency.setValueAtTime(520, t);
     osc.frequency.exponentialRampToValueAtTime(1040, t + 0.15);
     g.gain.setValueAtTime(0.2, t);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-
     osc.start(t);
     osc.stop(t + 0.15);
   },
@@ -33,12 +31,10 @@ const SoundEngine = {
     osc.type = 'sawtooth';
     osc.connect(g);
     g.connect(this.ctx.destination);
-
     osc.frequency.setValueAtTime(220, t);
     osc.frequency.linearRampToValueAtTime(90, t + 0.35);
     g.gain.setValueAtTime(0.3, t);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-
     osc.start(t);
     osc.stop(t + 0.35);
   },
@@ -51,20 +47,18 @@ const SoundEngine = {
     osc.type = 'triangle';
     osc.connect(g);
     g.connect(this.ctx.destination);
-
     osc.frequency.setValueAtTime(440, t);
     osc.frequency.exponentialRampToValueAtTime(880, t + 0.1);
     osc.frequency.exponentialRampToValueAtTime(1320, t + 0.25);
     g.gain.setValueAtTime(0.2, t);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-
     osc.start(t);
     osc.stop(t + 0.25);
   }
 };
 
 // ==========================================
-// SCÈNE DU MENU : Choix du niveau
+// SCÈNE MENU
 // ==========================================
 class MenuScene extends Phaser.Scene {
   constructor() {
@@ -119,11 +113,10 @@ class MenuScene extends Phaser.Scene {
       startY += 70;
     });
 
-    // Assistant du menu
     const tipBg = this.add.graphics();
     tipBg.fillStyle(0x161b22, 0.9);
     tipBg.fillRoundedRect(20, height - 100, width - 40, 75, 10);
-    this.add.text(width / 2, height - 62, "🤖 Guide :\nAttrape les pièces 🟡, cadeaux 🎁 et boucliers 🛡️.\nAttention : esquive les bombes 💣 !", {
+    this.add.text(width / 2, height - 62, "🤖 Guide :\nAttrape les pièces 🟡, cadeaux 🎁 et boucliers 🛡️.\nAttention : évite les bombes 💣 !", {
       fontSize: '13px',
       color: '#58a6ff',
       align: 'center'
@@ -132,7 +125,7 @@ class MenuScene extends Phaser.Scene {
 }
 
 // ==========================================
-// SCÈNE DE JEU : Le 1er jeu avec bonus & pièges
+// SCÈNE DE JEU
 // ==========================================
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -156,31 +149,63 @@ class GameScene extends Phaser.Scene {
 
     const { width, height } = this.scale;
 
-    // --- Création visuelle du joueur ---
-    const pGfx = this.add.graphics();
+    // --- Génération propre des Textures (Sans Conteneur) ---
+    // 1. Joueur
+    const pGfx = this.make.graphics();
     pGfx.fillStyle(0x3498db, 1);
     pGfx.fillRoundedRect(0, 0, 50, 50, 10);
     pGfx.generateTexture('playerTex', 50, 50);
-    pGfx.destroy();
 
-    // Bouclier visuel
-    const sGfx = this.add.graphics();
+    // 2. Bouclier (aura)
+    const sGfx = this.make.graphics();
     sGfx.lineStyle(4, 0x00ffff, 1);
-    sGfx.strokeCircle(32, 32, 30);
-    sGfx.generateTexture('shieldTex', 64, 64);
-    sGfx.destroy();
+    sGfx.strokeCircle(32, 32, 28);
+    sGfx.generateTexture('shieldAuraTex', 64, 64);
 
+    // 3. Pièce dorée
+    const cGfx = this.make.graphics();
+    cGfx.fillStyle(0xf1c40f, 1);
+    cGfx.fillCircle(18, 18, 16);
+    cGfx.lineStyle(3, 0xd4ac0d, 1);
+    cGfx.strokeCircle(18, 18, 16);
+    cGfx.generateTexture('coinTex', 36, 36);
+
+    // 4. Bombe
+    const bGfx = this.make.graphics();
+    bGfx.fillStyle(0xe74c3c, 1);
+    bGfx.fillCircle(18, 18, 16);
+    bGfx.lineStyle(3, 0xc0392b, 1);
+    bGfx.strokeCircle(18, 18, 16);
+    bGfx.generateTexture('bombTex', 36, 36);
+
+    // 5. Cadeau
+    const gGfx = this.make.graphics();
+    gGfx.fillStyle(0xe67e22, 1);
+    gGfx.fillRoundedRect(0, 0, 36, 36, 6);
+    gGfx.lineStyle(3, 0xffffff, 1);
+    gGfx.strokeRect(15, 0, 6, 36);
+    gGfx.generateTexture('giftTex', 36, 36);
+
+    // 6. Bonus Bouclier
+    const shGfx = this.make.graphics();
+    shGfx.fillStyle(0x00bcd4, 1);
+    shGfx.fillCircle(18, 18, 16);
+    shGfx.lineStyle(3, 0xffffff, 1);
+    shGfx.strokeCircle(18, 18, 16);
+    shGfx.generateTexture('shieldItemTex', 36, 36);
+
+    // Sprite Joueur
     this.player = this.physics.add.sprite(width / 2, height - 120, 'playerTex');
     this.player.setCollideWorldBounds(true);
 
-    this.shieldAura = this.add.sprite(this.player.x, this.player.y, 'shieldTex');
+    this.shieldAura = this.add.sprite(this.player.x, this.player.y, 'shieldAuraTex');
     this.shieldAura.setVisible(false);
 
-    // Groupe d'objets qui tombent
-    this.fallingGroup = this.physics.add.group();
+    // Groupe d'objets avec physique activée
+    this.itemsGroup = this.physics.add.group();
 
-    // UI
-    this.scoreText = this.add.text(20, 20, `Score: 0`, {
+    // Textes
+    this.scoreText = this.add.text(20, 20, 'Score: 0', {
       fontSize: '22px',
       fontStyle: 'bold',
       color: '#ffffff'
@@ -191,12 +216,12 @@ class GameScene extends Phaser.Scene {
       color: '#f1c40f'
     }).setOrigin(1, 0);
 
-    // Assistant en bas de l'écran
+    // Assistant en bas
     const botBg = this.add.graphics();
     botBg.fillStyle(0x161b22, 0.95);
     botBg.fillRoundedRect(15, height - 65, width - 30, 50, 8);
 
-    this.assistantText = this.add.text(25, height - 52, '🤖 : Déplace-toi avec le doigt ! Attrape les pièces 🟡', {
+    this.assistantText = this.add.text(25, height - 52, '🤖 : Fais glisser ton doigt pour ramasser !', {
       fontSize: '13px',
       color: '#58a6ff'
     });
@@ -205,12 +230,12 @@ class GameScene extends Phaser.Scene {
     this.input.on('pointermove', (p) => { this.targetX = p.x; });
     this.input.on('pointerdown', (p) => { this.targetX = p.x; });
 
-    // Collisions
-    this.physics.add.overlap(this.player, this.fallingGroup, this.collectItem, null, this);
+    // Collisions joueur / objets
+    this.physics.add.overlap(this.player, this.itemsGroup, this.onHitItem, null, this);
 
-    // Apparition régulière d'objets
-    this.spawnTimer = this.time.addEvent({
-      delay: 1100,
+    // Générateur régulier d'objets
+    this.time.addEvent({
+      delay: 900,
       callback: this.spawnItem,
       callbackScope: this,
       loop: true
@@ -220,16 +245,16 @@ class GameScene extends Phaser.Scene {
   update() {
     if (this.isGameOver) return;
 
-    // Déplacement fluide vers le doigt
+    // Suivi fluide du doigt
     if (Math.abs(this.player.x - this.targetX) > 4) {
       this.player.x = Phaser.Math.Linear(this.player.x, this.targetX, 0.25);
     }
 
     this.shieldAura.setPosition(this.player.x, this.player.y);
 
-    // Nettoyage des objets tombés tout en bas
-    this.fallingGroup.getChildren().forEach(item => {
-      if (item.y > this.scale.height - 70) {
+    // Supprimer les objets qui dépassent l'écran
+    this.itemsGroup.getChildren().forEach(item => {
+      if (item.y > this.scale.height - 60) {
         item.destroy();
       }
     });
@@ -242,73 +267,54 @@ class GameScene extends Phaser.Scene {
   spawnItem() {
     if (this.isGameOver) return;
 
-    const x = Phaser.Math.Between(40, this.scale.width - 40);
+    const x = Phaser.Math.Between(30, this.scale.width - 30);
     const rand = Math.random();
+    let texture = 'coinTex';
     let type = 'coin';
 
-    // Logique d'apparition : bombe, cadeau, bouclier ou pièce
     if (rand < this.levelConfig.bombRatio) {
+      texture = 'bombTex';
       type = 'bomb';
     } else if (rand > 0.88) {
+      texture = 'giftTex';
       type = 'gift';
     } else if (rand > 0.80) {
+      texture = 'shieldItemTex';
       type = 'shield';
     }
 
-    const container = this.add.container(x, -25);
-    let color = 0xf1c40f;
-    let label = '🟡';
-
-    if (type === 'bomb') {
-      color = 0xe74c3c;
-      label = '💣';
-    } else if (type === 'gift') {
-      color = 0xe67e22;
-      label = '🎁';
-    } else if (type === 'shield') {
-      color = 0x00bcd4;
-      label = '🛡️';
-    }
-
-    const circle = this.add.circle(0, 0, 18, color);
-    const txt = this.add.text(0, 0, label, { fontSize: '18px' }).setOrigin(0.5);
-
-    container.add([circle, txt]);
-    container.setSize(36, 36);
-    this.physics.world.enable(container);
-    container.body.setVelocityY(this.currentSpeed);
-    container.itemType = type;
-
-    this.fallingGroup.add(container);
+    const item = this.itemsGroup.create(x, -20, texture);
+    item.itemType = type;
+    item.setVelocityY(this.currentSpeed);
   }
 
-  collectItem(player, item) {
+  onHitItem(player, item) {
     const type = item.itemType;
     item.destroy();
 
     if (type === 'coin') {
       SoundEngine.playSuccess();
       this.score += this.rewards.coinPoints;
-      this.currentSpeed += this.levelConfig.speedIncrement; // Accélération continue
+      this.currentSpeed += this.levelConfig.speedIncrement; // Accélération
       this.scoreText.setText(`Score: ${this.score}`);
-      this.setAssistant('Bien joué ! +10 pts ⚡ Ça accélère !');
+      this.setAssistant('Pièce attrapée ! 🟡 Vitesse + !');
     } 
     else if (type === 'gift') {
       SoundEngine.playPowerup();
       this.score += this.rewards.giftPoints;
       this.scoreText.setText(`Score: ${this.score}`);
-      this.setAssistant('Super cadeau ! 🎁 +50 points d\'un coup !');
+      this.setAssistant('Super cadeau ! 🎁 +50 points !');
     } 
     else if (type === 'shield') {
       SoundEngine.playPowerup();
       this.activateShield();
-      this.setAssistant(`🛡️ Bouclier activé ! Protégé pendant ${this.levelConfig.shieldDuration / 1000}s !`);
+      this.setAssistant(`🛡️ Bouclier activé pour ${this.levelConfig.shieldDuration / 1000}s !`);
     } 
     else if (type === 'bomb') {
       if (this.hasShield) {
         SoundEngine.playPowerup();
         this.consumeShield();
-        this.setAssistant('🛡️ Le bouclier a fait exploser la bombe sans dégâts !');
+        this.setAssistant('🛡️ Le bouclier a détruit la bombe !');
       } else {
         SoundEngine.playFail();
         this.triggerGameOver();
@@ -323,7 +329,7 @@ class GameScene extends Phaser.Scene {
     if (this.shieldTimer) this.shieldTimer.remove();
     this.shieldTimer = this.time.delayedCall(this.levelConfig.shieldDuration, () => {
       this.consumeShield();
-      this.setAssistant('⚠️ Ton bouclier s\'est désactivé ! Fais attention !');
+      this.setAssistant('⚠️ Le bouclier est terminé !');
     });
   }
 
@@ -339,35 +345,35 @@ class GameScene extends Phaser.Scene {
   triggerGameOver() {
     this.isGameOver = true;
     this.physics.pause();
-    this.setAssistant('💥 BOOM ! Touché par une bombe. Game Over !');
+    this.setAssistant('💥 BOOM ! Fin de la partie.');
 
     const { width, height } = this.scale;
     const bg = this.add.graphics();
     bg.fillStyle(0x000000, 0.85);
     bg.fillRect(0, 0, width, height);
 
-    this.add.text(width / 2, height / 2 - 80, 'GAME OVER', {
+    this.add.text(width / 2, height / 2 - 70, 'GAME OVER', {
       fontSize: '34px',
       fontStyle: 'bold',
       color: '#e74c3c'
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 2 - 20, `Score : ${this.score}`, {
+    this.add.text(width / 2, height / 2 - 15, `Score Final : ${this.score}`, {
       fontSize: '22px',
       color: '#ffffff'
     }).setOrigin(0.5);
 
-    const restartBtn = this.add.graphics();
-    restartBtn.fillStyle(0x27ae60, 1);
-    restartBtn.fillRoundedRect(width / 2 - 100, height / 2 + 30, 200, 50, 10);
+    const btn = this.add.graphics();
+    btn.fillStyle(0x27ae60, 1);
+    btn.fillRoundedRect(width / 2 - 90, height / 2 + 35, 180, 50, 10);
 
-    this.add.text(width / 2, height / 2 + 55, 'REJOUER', {
+    this.add.text(width / 2, height / 2 + 60, 'REJOUER', {
       fontSize: '18px',
       fontStyle: 'bold',
       color: '#ffffff'
     }).setOrigin(0.5);
 
-    const zone = this.add.zone(width / 2, height / 2 + 55, 200, 50).setInteractive();
+    const zone = this.add.zone(width / 2, height / 2 + 60, 180, 50).setInteractive();
     zone.on('pointerdown', () => {
       this.scene.start('MenuScene');
     });
