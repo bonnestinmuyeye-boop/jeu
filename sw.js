@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jeu-v3';
+const CACHE_NAME = 'jeu-v4';
 const ASSETS = [
   './',
   './index.html',
